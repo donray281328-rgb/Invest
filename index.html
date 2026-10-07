@@ -1,0 +1,192 @@
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invest Grow Kenya</title>
+<meta name="description" content="Invest Grow Kenya — single-file investment platform demo interface.">
+<style>
+:root{
+  --bg:#f4f7f6;--card:#fff;--text:#14221c;--muted:#6b7772;--line:#e4eae7;
+  --green:#087f5b;--green2:#0b9b70;--dark:#103c2d;--gold:#d9a441;
+  --danger:#c0392b;--shadow:0 10px 30px rgba(16,60,45,.08);--radius:18px;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
+a{text-decoration:none;color:inherit}.hidden{display:none!important}
+.app{min-height:100vh}.topbar{height:70px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;color:var(--dark)}.logo{width:38px;height:38px;border-radius:12px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:900}
+.layout{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 70px)}
+.sidebar{background:var(--dark);color:#d9e8e1;padding:20px 14px;position:sticky;top:70px;height:calc(100vh - 70px);overflow:auto}
+.nav-title{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:#91ada2;padding:16px 12px 8px}.nav button{width:100%;background:transparent;color:#cfe0d9;padding:11px 12px;border-radius:10px;text-align:left;margin:2px 0;display:flex;gap:10px;align-items:center}.nav button:hover,.nav button.active{background:rgba(255,255,255,.10);color:#fff}
+.main{padding:28px;max-width:1500px;width:100%;margin:auto}.page{display:none}.page.active{display:block}
+.mobile-menu{display:none;background:transparent;font-size:23px}.userbox{display:flex;align-items:center;gap:10px}.avatar{width:38px;height:38px;border-radius:50%;background:#dcefe8;color:var(--green);display:grid;place-items:center;font-weight:800}
+h1{font-size:30px;margin:0 0 8px}h2{font-size:21px;margin:0 0 14px}h3{font-size:16px;margin:0 0 8px}.subtitle{color:var(--muted);margin:0 0 24px}.grid{display:grid;gap:18px}.stats{grid-template-columns:repeat(4,1fr)}.two{grid-template-columns:repeat(2,1fr)}.three{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}.stat .label{color:var(--muted);font-size:13px}.stat .value{font-size:25px;font-weight:800;margin-top:7px}.stat .small{font-size:12px;color:var(--green);margin-top:7px}
+.hero{background:linear-gradient(135deg,#0b6f50,#0d9d72);color:#fff;border-radius:22px;padding:26px;margin-bottom:20px;display:flex;justify-content:space-between;gap:20px;align-items:center}.hero p{color:#d9f2e9;margin:5px 0 0}.hero .hero-value{font-size:30px;font-weight:900}
+.btn{padding:11px 16px;border-radius:10px;font-weight:700;transition:.15s}.btn:hover{transform:translateY(-1px)}.primary{background:var(--green);color:#fff}.secondary{background:#eaf5f1;color:var(--green)}.dark{background:var(--dark);color:#fff}.danger{background:#fff0ef;color:var(--danger)}.gold{background:#fff7e6;color:#8a6416}.full{width:100%}
+label{font-size:13px;font-weight:700;display:block;margin:0 0 7px}input,select,textarea{width:100%;border:1px solid #d7e1dc;border-radius:10px;padding:12px;background:#fff;color:var(--text);outline:none}input:focus,select:focus,textarea:focus{border-color:var(--green)}textarea{min-height:120px;resize:vertical}.field{margin-bottom:15px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.wrap{flex-wrap:wrap}.muted{color:var(--muted)}.tiny{font-size:12px}.money{font-variant-numeric:tabular-nums}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:620px}.table th,.table td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line);font-size:13px}.table th{color:var(--muted);font-weight:700}.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800}.success{background:#e5f6ef;color:#087f5b}.pending{background:#fff5dd;color:#8a6416}.failed{background:#ffebea;color:#a93226}.info{background:#e9f2ff;color:#2b63a4}
+.plan{position:relative}.plan.selected{border:2px solid var(--green)}.plan .rate{font-size:29px;font-weight:900;color:var(--green)}.plan ul{padding-left:18px;color:var(--muted);line-height:1.9;font-size:13px}.plan button{margin-top:5px}
+.notice{background:#fff9e9;border:1px solid #f2dfae;border-radius:12px;padding:13px;color:#6f571c;font-size:13px}.successbox{background:#eaf7f1;border:1px solid #bce3d3;color:#116b50;padding:13px;border-radius:12px}
+.faq{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}.faq button{background:#fff;width:100%;padding:15px;text-align:left;font-weight:750}.faq div{padding:0 15px 15px;color:var(--muted);font-size:14px;line-height:1.6}
+.progress{height:9px;background:#e8eeeb;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--green);border-radius:99px}
+.auth{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}.auth-side{background:linear-gradient(135deg,#0a4f3b,#0c9c70);color:#fff;padding:8vw;display:flex;flex-direction:column;justify-content:center}.auth-side h1{font-size:48px;line-height:1.05}.auth-side p{color:#d7efe7;line-height:1.7}.auth-card{display:flex;align-items:center;justify-content:center;padding:30px}.auth-form{width:min(440px,100%)}.auth-logo{display:flex;gap:10px;align-items:center;font-weight:900;font-size:20px;margin-bottom:25px}.auth-switch{text-align:center;color:var(--muted);font-size:13px;margin-top:15px}.link{color:var(--green);font-weight:800;cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;place-items:center;padding:20px;z-index:50}.modal.show{display:grid}.modal-card{background:#fff;border-radius:18px;padding:22px;width:min(500px,100%);max-height:90vh;overflow:auto}
+.toast{position:fixed;right:20px;bottom:20px;background:#173d31;color:#fff;padding:13px 17px;border-radius:12px;box-shadow:var(--shadow);display:none;z-index:100}.toast.show{display:block}
+.footer-note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:20px}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:220px 1fr}}
+@media(max-width:760px){
+ .topbar{padding:0 15px}.mobile-menu{display:block}.layout{display:block}.sidebar{position:fixed;left:-270px;top:70px;width:250px;z-index:30;transition:.2s}.sidebar.open{left:0}.main{padding:18px}.stats,.two,.three{grid-template-columns:1fr}.hero{display:block}.hero .hero-value{margin-top:15px}.auth{grid-template-columns:1fr}.auth-side{display:none}h1{font-size:25px}.table{min-width:560px}
+}
+</style>
+</head>
+<body>
+
+<div id="authView" class="auth">
+  <section class="auth-side">
+    <div class="logo">IG</div>
+    <h1>Grow with a smarter financial plan.</h1>
+    <p>Invest Grow Kenya is a professional platform interface designed to help users view investment opportunities, track balances, manage withdrawals and stay informed.</p>
+    <div class="notice" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff">
+      Demo interface: investment returns shown in this file are estimates only and are not guaranteed.
+    </div>
+  </section>
+  <section class="auth-card">
+    <div class="auth-form">
+      <div class="auth-logo"><span class="logo">IG</span> Invest Grow Kenya</div>
+      <div id="loginForm">
+        <h2>Welcome back</h2><p class="subtitle">Sign in to your account.</p>
+        <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="you@example.com"></div>
+        <div class="field"><label>Password</label><input id="loginPassword" type="password" placeholder="••••••••"></div>
+        <button class="btn primary full" onclick="login()">Sign in</button>
+        <p class="auth-switch">Don't have an account? <span class="link" onclick="showRegister()">Create one</span></p>
+      </div>
+      <div id="registerForm" class="hidden">
+        <h2>Create account</h2><p class="subtitle">Set up your Invest Grow Kenya profile.</p>
+        <div class="field"><label>Full name</label><input id="regName" placeholder="John Kamau"></div>
+        <div class="field"><label>Email</label><input id="regEmail" type="email" placeholder="you@example.com"></div>
+        <div class="field"><label>Phone number</label><input id="regPhone" placeholder="+254 7XX XXX XXX"></div>
+        <div class="field"><label>Password</label><input id="regPassword" type="password" placeholder="Create a password"></div>
+        <div class="field"><label>Referral code (optional)</label><input id="regRef" placeholder="Optional"></div>
+        <label style="font-weight:500;margin-bottom:15px"><input id="regTerms" type="checkbox" style="width:auto;margin-right:7px"> I agree to the Terms of Service.</label>
+        <button class="btn primary full" onclick="register()">Create account</button>
+        <p class="auth-switch">Already registered? <span class="link" onclick="showLogin()">Sign in</span></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="appView" class="app hidden">
+<header class="topbar">
+  <div class="row" style="justify-content:flex-start">
+    <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+    <div class="brand"><span class="logo">IG</span> Invest Grow Kenya</div>
+  </div>
+  <div class="userbox"><span id="topName">John</span><span class="avatar" id="avatar">J</span></div>
+</header>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <nav class="nav">
+    <div class="nav-title">Overview</div>
+    <button class="active" data-page="dashboard">⌂ Dashboard</button>
+    <button data-page="plans">▣ Investment Plans</button>
+    <button data-page="calculator">⌕ Calculator</button>
+    <div class="nav-title">Money</div>
+    <button data-page="deposit">＋ Deposit</button>
+    <button data-page="withdraw">↗ Withdraw</button>
+    <button data-page="transactions">▤ Transactions</button>
+    <div class="nav-title">Community</div>
+    <button data-page="referrals">♧ Referrals</button>
+    <button data-page="support">? Support Center</button>
+    <button data-page="notifications">♢ Notifications <span id="notifBadge" class="badge success" style="margin-left:auto">2</span></button>
+    <div class="nav-title">Account</div>
+    <button data-page="profile">◉ Profile</button>
+    <button data-page="terms">§ Terms of Service</button>
+    <button onclick="logout()">⇥ Sign out</button>
+  </nav>
+  <div class="footer-note">Single-file demo. Connect your secure backend, database and payment provider before production use.</div>
+</aside>
+
+<main class="main">
+<section id="dashboard" class="page active">
+  <div class="hero">
+    <div><h1 id="greeting">Good afternoon, John 👋</h1><p>Welcome back to your Invest Grow Kenya dashboard.</p></div>
+    <div><div class="tiny">Available balance</div><div class="hero-value money" id="heroBalance">KSh 12,450</div></div>
+  </div>
+  <div class="grid stats">
+    <div class="card stat"><div class="label">Total deposited</div><div class="value money" id="statDeposited">KSh 25,000</div><div class="small">Across active plans</div></div>
+    <div class="card stat"><div class="label">Estimated daily return</div><div class="value money" id="statDaily">KSh 175</div><div class="small">Estimate, not guaranteed</div></div>
+    <div class="card stat"><div class="label">Current balance</div><div class="value money" id="statBalance">KSh 12,450</div><div class="small">Demo account balance</div></div>
+    <div class="card stat"><div class="label">Withdrawal balance</div><div class="value money" id="statWithdraw">KSh 12,450</div><div class="small">Available to request</div></div>
+  </div>
+  <div class="grid two" style="margin-top:18px">
+    <div class="card"><div class="row"><h2>Quick actions</h2></div>
+      <div class="grid two"><button class="btn primary" onclick="go('deposit')">＋ Deposit</button><button class="btn secondary" onclick="go('withdraw')">↗ Withdraw</button><button class="btn secondary" onclick="go('calculator')">⌕ Calculate</button><button class="btn secondary" onclick="go('support')">? Get help</button></div>
+    </div>
+    <div class="card"><h2>Portfolio snapshot</h2><div class="row tiny"><span>Active allocation</span><b>68%</b></div><div class="progress" style="margin:8px 0 14px"><i style="width:68%"></i></div><div class="row tiny"><span>Starter</span><span>KSh 10,000</span></div><div class="row tiny" style="margin-top:8px"><span>Growth</span><span>KSh 15,000</span></div></div>
+  </div>
+  <div class="card" style="margin-top:18px"><div class="row"><h2>Recent activity</h2><button class="btn secondary" onclick="go('transactions')">View all</button></div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="plans" class="page">
+  <h1>Investment Plans</h1><p class="subtitle">Choose a plan based on your objectives and risk tolerance.</p>
+  <div class="notice" style="margin-bottom:18px">Returns displayed here are illustrative estimates. Actual investment performance may vary, and no fixed return is guaranteed.</div>
+  <div class="grid two">
+    <div class="card plan"><div class="row"><h2>Starter</h2><span class="badge success">Popular</span></div><div class="rate">0.50% <small>/ estimate per day</small></div><p class="muted">Entry-level plan for learning the platform.</p><ul><li>Minimum: KSh 600</li><li>Flexible tracking</li><li>Digital statements</li></ul><button class="btn primary full" onclick="selectPlan('Starter')">Choose Starter</button></div>
+    <div class="card plan"><div class="row"><h2>Growth</h2><span class="badge info">Balanced</span></div><div class="rate">0.70% <small>/ estimate per day</small></div><p class="muted">For users seeking a larger allocation.</p><ul><li>Minimum: KSh 5,000</li><li>Portfolio tracking</li><li>Priority support</li></ul><button class="btn primary full" onclick="selectPlan('Growth')">Choose Growth</button></div>
+    <div class="card plan"><div class="row"><h2>Premium</h2><span class="badge gold">Advanced</span></div><div class="rate">0.90% <small>/ estimate per day</small></div><p class="muted">Higher-risk illustrative option.</p><ul><li>Minimum: KSh 25,000</li><li>Detailed reporting</li><li>Priority support</li></ul><button class="btn primary full" onclick="selectPlan('Premium')">Choose Premium</button></div>
+    <div class="card plan"><div class="row"><h2>Elite</h2><span class="badge info">Custom</span></div><div class="rate">1.00% <small>/ estimate per day</small></div><p class="muted">Illustrative high-tier plan.</p><ul><li>Minimum: KSh 100,000</li><li>Personalized reporting</li><li>Dedicated support</li></ul><button class="btn primary full" onclick="selectPlan('Elite')">Choose Elite</button></div>
+  </div>
+</section>
+
+<section id="deposit" class="page">
+  <h1>Make a Deposit</h1><p class="subtitle">Fund your selected plan using the configured payment flow.</p>
+  <div class="grid two">
+    <div class="card"><h2>Deposit details</h2>
+      <div class="field"><label>Investment plan</label><select id="depositPlan"><option>Starter</option><option>Growth</option><option>Premium</option><option>Elite</option></select></div>
+      <div class="field"><label>Amount (KSh)</label><input id="depositAmount" type="number" min="600" value="600"></div>
+      <div class="field"><label>M-Pesa phone number</label><input id="depositPhone" placeholder="+254 7XX XXX XXX"></div>
+      <button class="btn primary full" onclick="deposit()">Continue with M-Pesa</button>
+      <p class="footer-note">Demo only: this button does not send an actual STK push or move real money. A production version must use a secure server-side payment integration.</p>
+    </div>
+    <div class="card"><h2>Before you deposit</h2><ul class="muted" style="line-height:2"><li>Review the selected plan and minimum amount.</li><li>Confirm your M-Pesa number.</li><li>Read the investment risk disclosure.</li><li>Keep your transaction reference.</li></ul></div>
+  </div>
+</section>
+
+<section id="withdraw" class="page">
+  <h1>Withdraw</h1><p class="subtitle">Request a withdrawal to your registered mobile money account.</p>
+  <div class="grid two">
+    <div class="card"><h2>Withdrawal request</h2><div class="field"><label>Amount (KSh)</label><input id="withdrawAmount" type="number" min="200" value="200"></div><div class="field"><label>M-Pesa number</label><input id="withdrawPhone" placeholder="+254 7XX XXX XXX"></div><button class="btn primary full" onclick="withdraw()">Submit withdrawal request</button><p class="footer-note">Minimum request: KSh 200. In a production system, withdrawals should be authenticated, risk-checked and processed through a secure backend.</p></div>
+    <div class="card"><h2>Withdrawal balance</h2><div class="hero-value money" style="color:var(--green)" id="withdrawAvailable">KSh 12,450</div><p class="muted">Pending withdrawals may temporarily reduce your available balance.</p></div>
+  </div>
+</section>
+
+<section id="transactions" class="page">
+  <h1>Transactions</h1><p class="subtitle">Your account activity.</p>
+  <div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Reference</th><th>Type</th><th>Plan</th><th>Amount</th><th>Status</th></tr></thead><tbody id="transactionsTable"></tbody></table></div></div>
+</section>
+
+<section id="referrals" class="page">
+  <h1>Referral Program</h1><p class="subtitle">Invite friends and track eligible referral rewards.</p>
+  <div class="grid three">
+    <div class="card stat"><div class="label">Friends invited</div><div class="value" id="refCount">12</div></div>
+    <div class="card stat"><div class="label">Successful referrals</div><div class="value">7</div></div>
+    <div class="card stat"><div class="label">Referral rewards</div><div class="value money">KSh 1,400</div></div>
+  </div>
+  <div class="card" style="margin-top:18px"><h2>Your invite link</h2><div class="row"><input id="refLink" value="https://investgrow.example/register?ref=IGK7A2P9" readonly><button class="btn primary" onclick="copyReferral()">Copy</button></div><p class="footer-note">Referral rewards should only be paid according to a lawful, transparent referral policy and should not depend solely on recruiting new investors.</p></div>
+</section>
+
+<section id="support" class="page">
+  <h1>Support Center</h1><p class="subtitle">Find answers or contact the support team.</p>
+  <div class="grid two">
+    <div class="card"><h2>Frequently asked questions</h2>
+      <div class="faq"><button onclick="toggleFaq(this)">How do I make a deposit? <span>＋</span></button><div class="hidden">Choose a plan, enter an amount and your registered mobile number, then follow the secure payment instructions provided by the production payment service.</div></div>
+      <div class="faq"><button onclick="toggleFaq(this)">How do withdrawals work? <span>＋</span></button><div class="hidden">Submit a withdrawal request. A production platform should authenticate the request and process it through its configured payment provider.</div></div>
+      <div class="faq"><button onclick="toggleFaq(this)">Are returns guaranteed? <span>＋</span></button><div class="hidden">No. Investment performance can go up or down. The estimates in this demo are illustrative and must not be presented as guaranteed profits.</div></div>
+      <div class="faq"><button onclick="toggleFaq(this)">How do I update my profile? <span>＋</span></button><div class="hidden">Open Profile, edit the permitted fields and save you
